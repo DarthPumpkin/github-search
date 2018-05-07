@@ -17,3 +17,15 @@ find_sources.create_cache()
 urls = find_sources.load_cache()
 subprocess.call(["git", "clone", urls[0]])
 ~~~
+
+
+search.py
+---------
+Command line interface for the search engine.
+
+Example
+~~~
+python3 search.py
+Query: sort ret:int[]
+....
+~~~
