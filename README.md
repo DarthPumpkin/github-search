@@ -19,6 +19,33 @@ subprocess.call(["git", "clone", urls[0]])
 ~~~
 
 
+repository.py
+-------------
+Clones the reppsitory and filter it for java files to be passed to the parser.
+
+- `clone_repo()` clones repository into temporary directory before being passed to the java parser.
+- `java_files()` filter repository for java files.
+- `delete()` deletes repo from the temp folder.
+- `get_target_dir()` returns the directory where the repo will be cloned
+
+Example
+~~~
+import repository
+import find_sources
+
+urls = find_sources.load_cache()
+for url in urls:
+    print('clonning ', url, ' into ', repository.get_target_dir(url))
+    target_dir = repository.clone_repo(url)
+    java_files = repository.java_files(target_dir)
+    print('available java files: ', java_files)
+    # parse files and pass to index
+    for java_file in java_files:
+        text = open(java_file).read()
+        print(text)
+    repository.delete(target_dir)
+~~~
+
 search.py
 ---------
 Command line interface for the search engine.
