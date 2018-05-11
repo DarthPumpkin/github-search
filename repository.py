@@ -15,9 +15,10 @@ def clone_repo(clone_url):
     
     target_dir = get_target_dir(clone_url)
     if os.path.exists(target_dir):
-        delete(target_dir)
+        return target_dir
+        # delete(target_dir)
 
-    subprocess.call(["git", "clone", clone_url, target_dir])
+    subprocess.call(["git", "clone", "--depth", "1", clone_url, target_dir])
     return target_dir
 
 def delete(path):

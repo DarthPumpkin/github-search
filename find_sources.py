@@ -28,7 +28,7 @@ def load_cache():
 
                 result.append(item["clone_url"])
 
-    return result
+    return list(set(result))
 
 
 def create_cache():

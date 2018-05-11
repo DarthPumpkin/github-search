@@ -10,20 +10,24 @@ def find_methods(code_str: str):
     cu = javalang.parse.parse(code_str)
 
     # these might be useful later if we want to try some rudimentary name resolution
-    package_name = cu.package.name
+    package_name = cu.package.name if cu.package is not None else "default"
     imports = [imp.path for imp in cu.imports]
 
     classes = cu.types
     for cls in classes:
+        if not isinstance(cls, javalang.tree.ClassDeclaration):
+            continue
+
         # extra class metadata if we're interested
-        superclasses = [supercls.name for supercls in (cls.extends or [])]
+        superclass = cls.extends.name if cls.extends is not None else None
         interfaces = [interface.name for interface in (cls.implements or [])]
 
         for method in cls.methods:
             # here is where we can do advanced stuff such as making a list of method calls
             body = method.body
-            for expression in body:
-                pass  # do advanced things here
+            if body is not None:
+                for expression in body:
+                    pass  # do advanced things here
 
             methods += [_make_method_dict(cls, method)]
 

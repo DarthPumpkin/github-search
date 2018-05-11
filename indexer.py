@@ -48,4 +48,5 @@ if __name__ == "__main__":
             print('Creating index \"' + index_config['index'] + '\"')
             create_index(index_config)
 
+
             insert_function(index_config, 'max', 'int', ['int', 'int'], ['max'])
