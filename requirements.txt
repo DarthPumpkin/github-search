@@ -1,1 +1,2 @@
 requests
+javalang==0.10.0
