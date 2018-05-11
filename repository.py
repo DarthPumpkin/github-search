@@ -18,7 +18,7 @@ def clone_repo(clone_url):
         return target_dir
         # delete(target_dir)
 
-    subprocess.call(["git", "clone", "--depth", "1", clone_url, target_dir])
+    subprocess.call(["git", "clone", "--depth", "1", "--quiet", clone_url, target_dir])
     return target_dir
 
 def delete(path):

@@ -29,17 +29,25 @@ def find_methods(code_str: str):
                 for expression in body:
                     pass  # do advanced things here
 
-            methods += [_make_method_dict(cls, method)]
+            if method.body_position is not None:
+                start, end = method.body_position
+                _,_,start_of_start_token,_ = start
+                _,_,_,end_of_start_token = end
+                method_body = code_str[start_of_start_token:end_of_start_token]
+            else:
+                method_body = ""
+
+            methods += [_make_method_dict(cls, method, method_body)]
 
     return methods
 
 
-def _make_method_dict(cls, method):
+def _make_method_dict(cls, method, method_body):
     parameters = []
     for param in method.parameters:
         parameters += [{"name": param.name,
                         "type": param.type.name,
-                        "modifiers": param.modifiers}]
+                        "modifiers": list(param.modifiers)}]
     annotations = [ann.name for ann in method.annotations]
     if method.return_type is not None:
         return_type = method.return_type.name
@@ -49,7 +57,8 @@ def _make_method_dict(cls, method):
             "return_type": return_type,
             "parameters": parameters,
             "class": cls.name,
-            "annotations": annotations}
+            "annotations": annotations,
+            "body": method_body}
 
 
 if __name__ == "__main__":

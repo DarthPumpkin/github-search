@@ -29,9 +29,8 @@ def delete_index(index_config):
     r = requests.delete(request_url)
 
 # Should probably contain some information on where to find the function (repo, file name, line number)
-def insert_function(index_config, function_name, return_type, arguments, keywords):
-    function_dict = {'name': function_name, 'return_type': return_type, 'arguments': arguments, keywords: keywords}
-    function_json_str = json.dumps(function_dict)
+def insert_function(index_config, data):
+    function_json_str = json.dumps(data)
     headers = {'Content-Type': 'application/json'}
     request_url = 'http://' + index_config['host'] + ':' + index_config['port'] + '/' + index_config['index'] + '/function/'
     r = requests.post(request_url, data = function_json_str, headers = headers)
