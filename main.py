@@ -4,6 +4,7 @@ import find_sources
 import parse
 import javalang
 import json
+import math
 from tqdm import tqdm
 
 f = open('config.json')
@@ -20,8 +21,10 @@ else:
         indexer.create_index(index_config)
 
 
-urls = find_sources.load_cache()[0:50]
-for repo in tqdm(urls):
+repos = find_sources.load_cache()[0:500]
+for data in tqdm(repos):
+    repo = data["url"]
+    score = data["score"]
 
     target_dir = repository.clone_repo(repo)
     for file in repository.java_files(target_dir):
@@ -43,4 +46,5 @@ for repo in tqdm(urls):
 
         # print(methods)
         for method in methods:
+            method["score"] = math.log(2 + method["score"]) + math.log(2 + score)
             indexer.insert_function(index_config, method)

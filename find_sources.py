@@ -17,6 +17,7 @@ MAX_REPO_SIZE = 5
 
 def load_cache():
     result = []
+    seen = set()
     for file in os.listdir("sources"):
         if file.endswith(".json"):
             text = open("sources/" + file).read()
@@ -25,9 +26,15 @@ def load_cache():
                 if size_in_mb > MAX_REPO_SIZE:
                     continue
 
-                result.append(item["clone_url"])
+                url = item["clone_url"]
+                if url not in seen:
+                    seen.add(url)
+                    result.append({
+                        "url": item["clone_url"],
+                        "score": item["stargazers_count"] + 0.5*item["watchers_count"] + 1,
+                    })
 
-    return sorted(list(set(result)))
+    return result
 
 
 def create_cache():

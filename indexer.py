@@ -42,6 +42,17 @@ def insert_function(index_config, data):
     r = requests.post(request_url, data=function_json_str, headers=headers)
 
 
+def search(index_config, query):
+    query_str = json.dumps({"query": query})
+    headers = {'Content-Type': 'application/json'}
+    request_url = 'http://' + index_config['host'] + ':' + index_config['port'] + '/' + index_config['index'] + '/function/_search'
+    r = requests.get(request_url, data=query_str, headers=headers)
+    if not r.ok:
+        print(r.text)
+        exit(1)
+    return r.json()
+
+
 if __name__ == "__main__":
     f = open('config.json')
     index_config = json.load(f)
