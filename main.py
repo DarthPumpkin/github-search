@@ -5,7 +5,6 @@ import parse
 import javalang
 import json
 from tqdm import tqdm
-from progressbar import progressbar
 
 f = open('config.json')
 index_config = json.load(f)
@@ -16,7 +15,7 @@ else:
     indexer.delete_index(index_config)
 
     if not indexer.index_exists(index_config):
-        print('Index \"' + index_config['index'] +'\" was not found')
+        print('Index \"' + index_config['index'] + '\" was not found')
         print('Creating index \"' + index_config['index'] + '\"')
         indexer.create_index(index_config)
 

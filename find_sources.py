@@ -3,7 +3,6 @@ import json
 import time
 import os
 import sys
-import datetime
 
 green = "\x1b[38;2;0;255;0m"
 greenish = "\x1b[38;2;93;173;110m"
@@ -33,7 +32,6 @@ def load_cache():
 
 def create_cache():
     print(green + "Searching github..." + reset)
-    results = []
     if not os.path.exists("sources"):
         os.mkdir("sources")
 

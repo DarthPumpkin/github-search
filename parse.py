@@ -31,8 +31,8 @@ def find_methods(code_str: str):
 
             if method.body_position is not None:
                 start, end = method.body_position
-                _,_,start_of_start_token,_ = start
-                _,_,_,end_of_start_token = end
+                _, _, start_of_start_token, _ = start
+                _, _, _, end_of_start_token = end
                 method_body = code_str[start_of_start_token:end_of_start_token]
             else:
                 method_body = ""
