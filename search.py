@@ -2,9 +2,10 @@ import indexer
 import json
 
 class Query:
-    def __init__(self, tags, return_type):
+    def __init__(self, tags, return_type, parameter):
         self.tags = tags
         self.return_type = return_type
+        self.parameter = parameter
 
 
 def help():
@@ -31,20 +32,24 @@ def interactive():
         parts = query.split()
         tags = []
         ret = None
+        parameter = None
+        show_json = False
         for part in parts:
             if ":" in part:
                 option, value = part.split(":")
                 if option == "ret":
                     ret = value
+                elif option == "param":
+                    parameter = value
+                elif option == "show" and value == "response":
+                    show_response = True
                 else:
                     print("Unknown option '{}'".format(option))
             else:
                 tags.append(part)
+        search(Query(tags, ret, parameter), show_response)
 
-        search(Query(tags, ret))
-
-
-def search(query):
+def search(query, show_response = False):
     query_dict = {
         "function_score": {
             "query": {
@@ -57,32 +62,72 @@ def search(query):
                         "inheritance_tags^2",
                         # "import_tags^1",
                         "name_tags^4",
-                        "name^4",
+                        "name^5",
                     ]
                 }
             },
-            "field_value_factor": {
-                "field": "score"
-            }
+            "functions": [{
+                "field_value_factor": {
+                    "field": "score"
+                }
+            }],
         }
     }
 
-    query_dict2 = {
-        "match": {
-            "body_tags": "json read",
-        }
-    }
+    if query.return_type is not None:
+        query_dict["function_score"]["functions"].append({ "filter": { "match": { "return_type": query.return_type }}, "weight": 10})
+
+    if query.parameter is not None:
+        query_dict["function_score"]["functions"].append({ "filter": { "match": { "parameters.type": query.parameter }}, "weight": 10})
 
     result = indexer.search(index_config, query_dict)
-    print(json.dumps(result, indent=4))
 
+    if show_response:
+        print("Response:")
+        print(json.dumps(result, indent=4))
+        print()
+        print()
+        print()
+
+    print("Found " + str(len(result["hits"]["hits"])) + " function(s)")
+    print()
     for hit in result["hits"]["hits"]:
-        print(hit["_source"]["body"])
+        if hit["_source"]["return_type"] != "null":
+            print(hit["_source"]["return_type"] + " " + hit["_source"]["name"] + "(", end="")
+        else:
+            print("void " + hit["_source"]["name"] + "(", end="")
+
+        for parameter in hit["_source"]["parameters"]:
+            print(parameter["type"] + " " + parameter["name"], end = "")
+            if parameter is not hit["_source"]["parameters"][-1]:
+                print(", ", end="")
+            else:
+                print(")")
+
+        print(fix_indentation_in_body(hit["_source"]["body"]))
         print()
 
     # print(query.tags)
     # print(query.return_type)
 
+def fix_indentation_in_body(body_str):
+    lines = body_str.splitlines()
+
+    # find min indentation
+    min_indent = 100000
+    for line in lines[1:]:
+        indent = 0
+        for i in range(len(line)):
+            if line[i] != ' ' and line[i] != '\t':
+                indent = i
+                break
+        if indent < min_indent and indent != len(line):
+            min_indent = indent
+
+    fixed_body = lines[0] + '\n'
+    for line in lines[1:]:
+        fixed_body += line[min_indent:] + '\n'
+    return fixed_body
 
 if __name__ == "__main__":
     interactive()
