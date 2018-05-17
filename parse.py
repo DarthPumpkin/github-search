@@ -159,14 +159,28 @@ def find_methods(code_str: str):
 
 def collapse_type(input_type):
     collapsed_type = input_type
-    if input_type == "Integer":
-        collapsed_type = "int"
-    elif input_type == "long":
-        collapsed_type = "int"
-    elif input_type == "short":
-        collapsed_type = "int"
-    elif input_type == "double":
-        collapsed_type = "float"
+    if input_type == "int":
+        collapsed_type = "Integer"
+    elif input_type.lower() == "long":
+        collapsed_type = "Integer"
+    elif input_type.lower() == "short":
+        collapsed_type = "Integer"
+    elif input_type.lower() == "double":
+        collapsed_type = "Float"
+    elif input_type == "float":
+        collapsed_type = "Float"
+    elif input_type == "String":
+        collapsed_type = "CharSequence"
+    elif input_type == "char[]":
+        collapsed_type = "CharSequence"
+    elif input_type == "Segment":
+        collapsed_type = "CharSequence"
+    elif input_type.endswith("[]"):
+        type_param = collapse_type(input_type[:-2])
+        collapsed_type = f"List<{type_param}>"
+    # will fail for things like ArrayListWrqpper
+    elif input_type.startswith("ArrayList"):
+        collapsed_type = input_type[5:]
     return collapsed_type
 
 def _make_method_dict(cls, method, score, method_body, body_tags, inheritance_tags, import_tags, name_tags):
@@ -203,6 +217,18 @@ def test():
     assert tokenize("camelCase") == ["camel", "case"]
     assert tokenize("snake_case") == ["snake", "case"]
     assert tokenize("_Who_Uses_This_Naming_Convention_") == ["who", "uses", "this", "naming", "convention"]
+
+    assert collapse_type("short") == "Integer"
+    assert collapse_type("Float") == "Float"
+    assert collapse_type("int[]") == "List<Integer>"
+    assert collapse_type("int[][]") == "List<List<Integer>>"
+    assert collapse_type("Double[][]") == "List<List<Float>>"
+    assert collapse_type("ArrayList[]") == "List<List>"
+    assert collapse_type("char[][]") == "List<CharSequence>"
+    assert collapse_type("String") == "CharSequence"
+    assert collapse_type("Segment") == "CharSequence"
+
+    # assert collapse_type("List<String>") == "List<CharSequence>"  # fails
 
 
 test()

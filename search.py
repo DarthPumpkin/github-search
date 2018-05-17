@@ -1,6 +1,9 @@
 import indexer
 import json
 
+from parse import collapse_type
+
+
 class Query:
     def __init__(self, tags, return_type, parameter):
         self.tags = tags
@@ -84,10 +87,12 @@ def search(query, show_response = False):
     if query.return_type is not None:
         if query.return_type == "void":
             query.return_type = "null"
-        query_dict["function_score"]["functions"].append({ "filter": { "match": { "return_type": query.return_type }}, "weight": 10})
+        query_dict["function_score"]["functions"].append(
+			{ "filter": { "match": { "return_type": collapse_type(query.return_type) }}, "weight": 10})
 
     if query.parameter is not None:
-        query_dict["function_score"]["functions"].append({ "filter": { "match": { "parameters.type": query.parameter }}, "weight": 10})
+        query_dict["function_score"]["functions"].append(
+			{ "filter": { "match": { "parameters.type": collapse_type(query.parameter) }}, "weight": 10})
 
     result = indexer.search(index_config, query_dict)
 
