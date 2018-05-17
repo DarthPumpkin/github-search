@@ -56,3 +56,7 @@ python3 search.py
 Query: sort ret:int[]
 ....
 ~~~
+
+License
+-------
+The code in this repository is distributed under the MIT license. It contains a slightly modified version of [javalang](https://github.com/c2nes/javalang).
