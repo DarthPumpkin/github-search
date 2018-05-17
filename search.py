@@ -117,6 +117,8 @@ def search(query, show_response = False):
 
 def fix_indentation_in_body(body_str):
     lines = body_str.splitlines()
+    if len(lines) == 0:
+        return body_str
 
     # find min indentation
     min_indent = 100000
