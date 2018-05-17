@@ -1,4 +1,5 @@
 # github-search
+github-search is a search tool that allows users to search for java functions from popular java repos on GitHub based on keywords and function signature.
 
 Usage
 -----
