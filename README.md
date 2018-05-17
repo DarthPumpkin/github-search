@@ -1,13 +1,14 @@
 # github-search
-github-search is a search tool that allows users to search for java functions from popular java repos on GitHub based on keywords and function signature.
+github-search is a search tool based on ElasticSearch that allows users to search for java functions from popular java repos on GitHub based on keywords and function signature.
 
 Installation
 -----
-Clone the repo and open a terminal in the repo directory and run 
+Make sure to have python3.6 (or newer) and ElasticSearch installed. Clone the repo and open a terminal in the repo directory and run
 ~~~
-#install javalang
-pip3 install -e javalang
+#install dependencies
+pip3 install -r requirements.txt
 ~~~
+We recommend doing this inside a `virtualenv` or similar.
 
 Usage
 -----
@@ -46,7 +47,7 @@ subprocess.call(["git", "clone", urls[0]])
 
 repository.py
 -------------
-Clones the reppsitory and filter it for java files to be passed to the parser.
+Clones the repository and filter it for java files to be passed to the parser.
 
 - `clone_repo()` clones repository into temporary directory before being passed to the java parser.
 - `java_files()` filter repository for java files.
@@ -84,4 +85,4 @@ Query: sort ret:int[]
 
 License
 -------
-The code in this repository is distributed under the MIT license. It contains a slightly modified version of [javalang](https://github.com/c2nes/javalang).
+The code in this repository is distributed under the MIT license. It contains a slightly modified version of [javalang](https://github.com/c2nes/javalang) (also MIT).
