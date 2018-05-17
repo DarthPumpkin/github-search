@@ -5,6 +5,7 @@ Usage
 ~~~
 # Find repositories on github
 python3 find_sources.py
+# Start elasticsearch in another terminal
 # Index everything
 python3 main.py
 
