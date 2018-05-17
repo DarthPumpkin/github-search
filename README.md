@@ -1,5 +1,20 @@
 # github-search
 
+Usage
+-----
+~~~
+# Find repositories on github
+python3 find_sources.py
+# Index everything
+python3 main.py
+
+# Search
+python3 search.py
+> Query: quicksort
+> Query: sort ret:int
+> Query: read file ret:String[] param:String
+~~~
+
 find_sources.py
 ---------------
 Searches github for likely candidates to index.
