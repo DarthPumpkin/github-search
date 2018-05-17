@@ -16,6 +16,12 @@ Example:
 > Query: sort sql where tweets ret:string[]
 """)
 
+green = "\x1b[38;2;0;255;0m"
+greenish = "\x1b[38;2;93;173;110m"
+red = "\x1b[38;2;255;0;0m"
+grey = "\x1b[38;2;193;184;192m"
+reset = "\033[0m"
+clear_line = "\033[0K"
 
 f = open('config.json')
 index_config = json.load(f)
@@ -92,9 +98,10 @@ def search(query, show_response = False):
         print()
         print()
 
-    print("Found " + str(len(result["hits"]["hits"])) + " function(s)")
+    print(green + "Found " + str(len(result["hits"]["hits"])) + " function(s)" + reset)
     print()
-    for hit in result["hits"]["hits"]:
+    for i, hit in enumerate(result["hits"]["hits"]):
+        print(green + str(i) + ":" + reset)
         if hit["_source"]["return_type"] != "null":
             print(hit["_source"]["return_type"] + " " + hit["_source"]["name"] + "(", end="")
         else:
