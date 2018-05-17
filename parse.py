@@ -1,4 +1,5 @@
 import javalang
+import javalang.tree
 
 
 def tokenize(s):
@@ -190,10 +191,8 @@ def _make_method_dict(cls, method, score, method_body, body_tags, inheritance_ta
                         "type": collapse_type(param.type.name),
                         "modifiers": list(param.modifiers)}]
     annotations = [ann.name for ann in method.annotations]
-    if method.return_type is not None:
-        return_type = collapse_type(method.return_type.name)
-    else:
-        return_type = "null"
+    ret_type = method.return_type
+    return_type = _type_to_str(ret_type)
     return {
         "name": method.name,
         "return_type": return_type,
@@ -207,6 +206,21 @@ def _make_method_dict(cls, method, score, method_body, body_tags, inheritance_ta
         "name_tags": name_tags,
         "score": score,
     }
+
+
+def _type_to_str(ret_type: javalang.tree.Type):
+    if ret_type is not None:
+        return_type_str = ret_type.name
+        if isinstance(ret_type, javalang.tree.ReferenceType) and ret_type.arguments:
+            type_params = [_type_to_str(arg.type) for arg in ret_type.arguments]
+            return_type_str += f"<{', '.join(type_params)}>"
+        if ret_type.dimensions:
+            return_type_str += '[]' * len(ret_type.dimensions)
+        return_type_str = collapse_type(return_type_str)
+    else:
+        return_type_str = "null"
+    return return_type_str
+
 
 def test():
     assert tokenize("HelloWorld") == ["hello", "world"]
