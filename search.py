@@ -102,19 +102,14 @@ def search(query, show_response = False):
     print()
     for i, hit in enumerate(result["hits"]["hits"]):
         print(green + str(i+1) + ":" + reset)
-        if hit["_source"]["return_type"] != "null":
-            print(hit["_source"]["return_type"] + " " + hit["_source"]["name"] + "(", end="")
-        else:
-            print("void " + hit["_source"]["name"] + "(", end="")
+        source = hit["_source"]
+        retType = source["return_type"]
+        if retType == "null":
+            retType = "void"
 
-        for parameter in hit["_source"]["parameters"]:
-            print(parameter["type"] + " " + parameter["name"], end = "")
-            if parameter is not hit["_source"]["parameters"][-1]:
-                print(", ", end="")
-            else:
-                print(")")
+        print(retType + " " + source["name"] + "(" + ", ".join([p["type"] + " " + p["name"] for p in source["parameters"]]) + ")", end="")
 
-        print(fix_indentation_in_body(hit["_source"]["body"]))
+        print(fix_indentation_in_body(source["body"]))
         print()
 
     # print(query.tags)
