@@ -101,7 +101,7 @@ def search(query, show_response = False):
     print(green + "Found " + str(len(result["hits"]["hits"])) + " function(s)" + reset)
     print()
     for i, hit in enumerate(result["hits"]["hits"]):
-        print(green + str(i) + ":" + reset)
+        print(green + str(i+1) + ":" + reset)
         if hit["_source"]["return_type"] != "null":
             print(hit["_source"]["return_type"] + " " + hit["_source"]["name"] + "(", end="")
         else:

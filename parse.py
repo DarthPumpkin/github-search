@@ -38,7 +38,7 @@ def tokenize(s):
     for s in result:
         s2 = ""
         for c in s:
-            if c.isalpha():
+            if c.isalpha() or c in "[]<>,":
                 s2 += c
 
         if s2 != "":
@@ -101,7 +101,7 @@ def find_methods(code_str: str):
             if "static" in cls.modifiers:
                 score += 1
 
-            name_tags = [package_name, cls.name]
+            name_tags = [package_name, cls.name, method.name]
             import_tags = []
             import_tags += imports
 
@@ -116,6 +116,12 @@ def find_methods(code_str: str):
             inheritance_tags = sum((tokenize(s) for s in inheritance_tags), [])
             import_tags = sum((tokenize(s) for s in import_tags), [])
             name_tags = sum((tokenize(s) for s in name_tags), [])
+
+            # Common parts of package names
+            if "net" in name_tags:
+                name_tags.remove("net")
+            if "org" in name_tags:
+                name_tags.remove("org")
 
 
             # Filter duplicates and sort

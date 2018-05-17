@@ -41,7 +41,7 @@ for data in tqdm(repos):
         except KeyboardInterrupt:
             exit(1)
         except Exception as e:
-            # print("Skipping {}, unknown exception\n{}".format(file, e))
+            print("Skipping {}, unknown exception\n{}".format(file, e))
             continue
 
         # print(methods)
