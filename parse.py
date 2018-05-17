@@ -73,11 +73,24 @@ def find_methods(code_str: str):
             if (method.name.startswith("get") and method.name != "get") or method.name.startswith("set"):
                 continue
 
+            if method.body_position is not None:
+                start, end = method.body_position
+                _, _, start_of_start_token, _ = start
+                _, _, _, end_of_start_token = end
+                method_body = code_str[start_of_start_token:end_of_start_token]
+            else:
+                method_body = ""
+
             tags = []
             # here is where we can do advanced stuff such as making a list of method calls
             body = method.body
+            references_method_with_same_name = False
+            total_statements = 0
             if body is not None:
                 for path, expression in javalang.ast.walk_tree(body):
+                    if isinstance(expression, javalang.tree.Statement):
+                        total_statements += 1
+
                     if isinstance(expression, javalang.tree.Primary):
                         if expression.qualifier is not None and expression.qualifier != "":
                             tags.append(expression.qualifier)
@@ -87,13 +100,21 @@ def find_methods(code_str: str):
                         tags.append(expression.type.name)
                     if isinstance(expression, javalang.tree.MethodInvocation):
                         tags.append(expression.member)
+                        if expression.member == method.name:
+                            references_method_with_same_name = True
                     if isinstance(expression, javalang.tree.SuperMethodInvocation):
                         tags.append(expression.member)
+                        if expression.member == method.name:
+                            references_method_with_same_name = True
                     if isinstance(expression, javalang.tree.SuperMemberReference):
                         tags.append(expression.member)
                     if isinstance(expression, javalang.tree.VariableDeclarator):
                         tags.append(expression.name)
                     # print(expression
+
+            if total_statements <= 3 and references_method_with_same_name:
+                # Ignoring method because it is likely just a wrapper
+                continue
 
             score = 0
 
@@ -131,13 +152,6 @@ def find_methods(code_str: str):
             name_tags = sorted(set(name_tags))
             # print(tags)
 
-            if method.body_position is not None:
-                start, end = method.body_position
-                _, _, start_of_start_token, _ = start
-                _, _, _, end_of_start_token = end
-                method_body = code_str[start_of_start_token:end_of_start_token]
-            else:
-                method_body = ""
             # print(method_body)
             methods += [_make_method_dict(cls, method, score, method_body, body_tags, inheritance_tags, import_tags, name_tags)]
 
