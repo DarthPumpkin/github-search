@@ -64,7 +64,7 @@ for url in urls:
 
 search.py
 ---------
-Command line interface for the search engine. To search for a function, simply input tags separated by spaces and add a filter by return type by prededing the return type by `ret:`. It is also possible to search for function parameters using the prefix `param:`.
+Command line interface for the search engine. To search for a function, simply input tags separated by spaces and add a filter by return type by preceding the return type by `ret:`. It is also possible to search for function parameters using the prefix `param:`.
 
 Example
 ~~~
