@@ -34,6 +34,7 @@ def interactive():
         ret = None
         parameter = None
         show_json = False
+        show_response = False
         for part in parts:
             if ":" in part:
                 option, value = part.split(":")
@@ -75,6 +76,8 @@ def search(query, show_response = False):
     }
 
     if query.return_type is not None:
+        if query.return_type == "void":
+            query.return_type = "null"
         query_dict["function_score"]["functions"].append({ "filter": { "match": { "return_type": query.return_type }}, "weight": 10})
 
     if query.parameter is not None:

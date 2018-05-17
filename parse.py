@@ -137,16 +137,27 @@ def find_methods(code_str: str):
 
     return methods
 
+def collapse_type(input_type):
+    collapsed_type = input_type
+    if input_type == "Integer":
+        collapsed_type = "int"
+    elif input_type == "long":
+        collapsed_type = "int"
+    elif input_type == "short":
+        collapsed_type = "int"
+    elif input_type == "double":
+        collapsed_type = "float"
+    return collapsed_type
 
 def _make_method_dict(cls, method, score, method_body, body_tags, inheritance_tags, import_tags, name_tags):
     parameters = []
     for param in method.parameters:
         parameters += [{"name": param.name,
-                        "type": param.type.name,
+                        "type": collapse_type(param.type.name),
                         "modifiers": list(param.modifiers)}]
     annotations = [ann.name for ann in method.annotations]
     if method.return_type is not None:
-        return_type = method.return_type.name
+        return_type = collapse_type(method.return_type.name)
     else:
         return_type = "null"
     return {
@@ -162,7 +173,6 @@ def _make_method_dict(cls, method, score, method_body, body_tags, inheritance_ta
         "name_tags": name_tags,
         "score": score,
     }
-
 
 def test():
     assert tokenize("HelloWorld") == ["hello", "world"]
